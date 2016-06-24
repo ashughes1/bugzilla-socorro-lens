@@ -18,10 +18,9 @@
         }
     </style>
 <body onload="loadGraph(window.location.search)">       
-    <div style="width:300px; height:150px;" id='chart' class='chart'></div>
+    <div style="width:300px; height:150px;" id='chart' class='chart'><img src="og-logo.png" /></div>
     <script src='main.js'></script>
-    <script
->
+    <script>
         var items = [];
         var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
         var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*219));
