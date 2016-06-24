@@ -10,5 +10,4 @@ for (var i=0; i<nodes.length; i++) {
 }
 signatures = signatures.substring(0,signatures.length-2);
 var url = "https://ashughes1.github.io/bugzilla-socorro-lens/chart.htm?s=" + signatures;
-var iframe = "<iframe src='" + url + "' style='border:0'></iframe>";
-container.innerHTML = container.innerHTML + iframe;
+container.innerHTML = container.innerHTML + "<iframe src='" + url + "' style='border:0'></iframe>";
