@@ -5,16 +5,16 @@
     <link href='https://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
     <link href='https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
     <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
-    <link href="http://metricsgraphicsjs.org/css/metricsgraphics.css" rel="stylesheet" type="text/css" id="dark">
+    <link href="metricsgraphics.css" rel="stylesheet" type="text/css" id="dark">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js" charset="utf-8"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src='http://metricsgraphicsjs.org/js/metricsgraphics.min.js'></script>
+    <script src='metricsgraphics.min.js'></script>
 </head>
 
 <body onload="loadGraph(window.location.search)">       
     <div style="width:300px; height:150px; margin-top:-70px" id='chart'></div>
-    <script src='http://metricsgraphicsjs.org/js/main.js'></script>
+    <script src='main.js'></script>
     <script>
         var items = [];
         var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
