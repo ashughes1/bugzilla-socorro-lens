@@ -3,6 +3,17 @@
   "description": "This add-on inserts a graph of crash data from Socorro for all valid crash signatures indicated in the Crash Signatures field on a loaded Bugzilla bug report page.",
   "version": "0.1",
   "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "borderify@mozilla.org",
+      "strict_min_version": "45.0"
+    }
+  },
+  "applications": {
+    "gecko": {
+      "id": "bugzilla-socorro-lens@ashughes.com"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["https://bugzilla.mozilla.org/show_bug.cgi?id=*"],
