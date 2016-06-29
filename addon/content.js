@@ -71,7 +71,10 @@ for (var i=0; i<nodes.length; i++) {
         }
     }
 }
-signatures = signatures.substring(0,signatures.length-2);
-var url = "https://ashughes1.github.io/bugzilla-socorro-lens/chart.htm?s=" + signatures;
-var innerHTML = ['html:iframe', {src:url, style:'border:0'}];
-container.appendChild(jsonToDOM(innerHTML, document, {}));
+
+if (signatures.length > 0) {
+    signatures = signatures.substring(0,signatures.length-2);
+    var url = "https://ashughes1.github.io/bugzilla-socorro-lens/chart.htm?s=" + signatures;
+    var innerHTML = ['html:iframe', {src:url, style:'border:0'}];
+    container.appendChild(jsonToDOM(innerHTML, document, {}));
+}
