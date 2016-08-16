@@ -17,6 +17,7 @@
             margin-top:-40px;
         }
     </style>
+</head>
 <body onload="loadGraph(window.location.search)">       
     <div style="width:300px; height:150px;" id='chart' class='chart'>
     </div>
@@ -24,7 +25,7 @@
     <script>
         var items = [];
         var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
-        var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*219));
+        var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*365));
         var globals = {
             "url_base":"https://crash-stats.mozilla.com/search/?",
             "mouseover":function(d,i) {
@@ -59,38 +60,55 @@
             var signatures = getSignaturesFromURL(search);
             var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d";
             globals.url_base = globals.url_base + signatures;
-            d3.json(url, function(data) {
-                $.each(data, function(key, value) {
-                  if (key == "facets") {
-                    var histogram_date = value.histogram_date;
-                    $.each(histogram_date, function(key, value) {
-                        items.push({
-                            "date":value.term.substring(0,10),
-                            "count":value.count,
-                            "installs":value.facets.cardinality_install_time.value});
-                        if (items.length >= histogram_date.length) {
-                            items = MG.convert.date(items, 'date');
-                            MG.data_graphic({
-                                data: items,
-                                width: 300,
-                                height: 170,
-                                target: document.getElementById('chart'),
-                                x_accessor: 'date',
-                                y_accessor: 'count',
-                                yax_count: 3,
-                                chart_type: "line",
-                                mouseover: globals.mouseover
-                            });
-                            var mouseouts = d3.selectAll('.mg-rollover-rect rect').on('mouseout');
-                            d3.selectAll('.mg-rollover-rect rect')
-                                .on('click', function(d) {
-                                    window.open(globals.url, '_blank');
-                                });
-                        }
-                    });
-                  }
+
+            for (var i=0; i<365; i++) {
+                items.push({
+                    "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
+                     "count":0,
+                     "installs":0
                 });
-            });
+            }
+
+            if (items.length >= 365) {
+                console.log(items);
+                    var processed = 0;
+		    d3.json(url, function(data) {
+		        $.each(data, function(key, value) {
+		          if (key == "facets") {
+		            var histogram_date = value.histogram_date;
+		            $.each(histogram_date, function(key, value) {
+                                for (var i=0; i<items.length; i++) {
+                                     if (items[i].date == value.term.substring(0,10)) {
+                                         items[i].count = value.count;
+                                         items[i].installs = value.facets.cardinality_install_time.value;
+                                     }
+                                }
+		                processed = processed + 1;
+
+		                if (processed >= histogram_date.length) {
+		                    items = MG.convert.date(items, 'date');
+		                    MG.data_graphic({
+		                        data: items,
+		                        width: 300,
+		                        height: 170,
+		                        target: document.getElementById('chart'),
+		                        x_accessor: 'date',
+		                        y_accessor: 'count',
+		                        yax_count: 3,
+		                        chart_type: "line",
+		                        mouseover: globals.mouseover
+		                    });
+		                    var mouseouts = d3.selectAll('.mg-rollover-rect rect').on('mouseout');
+		                    d3.selectAll('.mg-rollover-rect rect')
+		                        .on('click', function(d) {
+		                            window.open(globals.url, '_blank');
+		                        });
+		                }
+		            });
+		          }
+		        });
+		    });
+            }
         }
     </script>
 </body>
