@@ -25,7 +25,7 @@
     <script>
         var items = [];
         var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
-        var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*184));
+        var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*180));
         var globals = {
             "url_base":"https://crash-stats.mozilla.com/search/?",
 			"url":[],
@@ -77,7 +77,7 @@
             var signatures = getSignaturesFromURL(search);
 
 			// Initialize chart data
-            for (var i=0; i<184; i++) {
+            for (var i=0; i<180; i++) {
                 items.push({
                     "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
                      "count":0,
@@ -85,7 +85,7 @@
                 });
             }
 			
-			if (items.length >= 184) {
+			if (items.length >= 180) {
 				var processed = [0,0];
 				$.each(signatures, function(i) {
 					// Set the report URL, this will be used to load the data report on click
