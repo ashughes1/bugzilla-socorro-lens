@@ -53,14 +53,21 @@
         function getSignaturesFromURL(search) {
 			var index = search.indexOf("?s=");
             search = search.substring(index+3);
-            var signatures = search.split("\\");
-            
+            var signatures = (search.indexOf("\\") !== -1) ? search.split("\\") : [search];
             var result = [];
-			for (var i=0; i<(signatures.length/10).toFixed(0); i++) {
-				for (var j=0; j<10; j++) {
+			
+			if (signatures.length >= 10) {
+				for (var i=0; i<(signatures.length/10).toFixed(0); i++) {
+					for (var j=0; j<10; j++) {
+						if (!result[i]) result[i] = "";
+						result[i] = result[i] + "&signature=~" + signatures[(i*10)+j];
+					}	
+				}
+			} else {
+				for (var i=0; i<signatures.length; i++) {
 					if (!result[i]) result[i] = "";
-					result[i] = result[i] + "&signature=~" + signatures[(i*10)+j];
-				}	
+					result[i] = result[i] + "&signature=~" + signatures[i];
+				}
 			}
             return result;
         }
