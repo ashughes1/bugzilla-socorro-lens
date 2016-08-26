@@ -65,8 +65,8 @@
 				}
 			} else {
 				for (var i=0; i<signatures.length; i++) {
-					if (!result[i]) result[i] = "";
-					result[i] = result[i] + "&signature=~" + signatures[i];
+					if (!result[0]) result[0] = "";
+					result[0] = result[0] + "&signature=~" + signatures[i];
 				}
 			}
             return result;
