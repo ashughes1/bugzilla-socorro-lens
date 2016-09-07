@@ -58,7 +58,7 @@
 			
 			var j = 0;
 			$.each(signatures, function(i) {
-				if (result[j].length > 700) result[++j] = "";
+				if (result[j].length > 500) result[++j] = "";
 				result[j] = result[j] + "&signature=~" + signatures[i]
 			});
 			
