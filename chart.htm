@@ -104,7 +104,7 @@
 							}
 						});
 						// Create the chart once all Socorro data has been processed
-						if (processed[0] >= processed[1]) {
+						if (processed[0] >= processed[1] && i >= signatures.length) {
 							items = MG.convert.date(items, 'date');
 							MG.data_graphic({
 								data: items,
