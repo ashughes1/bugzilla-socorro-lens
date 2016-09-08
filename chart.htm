@@ -58,7 +58,9 @@
                 signatures = search.split("\\");
             } else if (search.indexOf("%5C") !== -1) {
                 signatures = search.split("%5C");
-            }
+            } else {
+				signatures = [search];
+			}
             var result = [""];
 			
 			var j = 0;
