@@ -53,7 +53,12 @@
         function getSignaturesFromURL(search) {
 			var index = search.indexOf("?s=");
             search = search.substring(index+3);
-            var signatures = (search.indexOf("\\") !== -1) ? search.split("\\") : [search];
+			var signatures = [];
+			if (search.indexOf("\\") !== -1) {
+                signatures = search.split("\\");
+            } else if (search.indexOf("%5C") !== -1) {
+                signatures = search.split("%5C");
+            }
             var result = [""];
 			
 			var j = 0;
