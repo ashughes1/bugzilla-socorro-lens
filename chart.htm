@@ -118,7 +118,7 @@
 					if (!globals.url[i]) globals.url[i] = "";
 					globals.url[i] = globals.url_base + signatures[i];
 					// Iterate through the Socorro data and create the chart data object
-					var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d";
+					var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d&_results_number=0";
 					url = url.replace("/?&signature", "/?signature");
 					d3.json(url, function(data) {
 						$.each(data, function(key, value) {
