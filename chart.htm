@@ -19,8 +19,8 @@
     </style>
 </head>
 <body onload="loadGraph(window.location.search);">       
-    <div style="width:300px; height:150px;" id='chart' class='chart'></div>
-	<div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
+    <div style="width:500px; height:250px;" id='chart' class='chart'></div>
+	<div style="width:500px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
     <script src='metricsgraphics/main.js'></script>
     <script>
         var items = [];
@@ -76,8 +76,8 @@
             items = MG.convert.date(items, 'date');
             MG.data_graphic({
                 data: items,
-                width: 300,
-                height: 170,
+                width: 500,
+                height: 270,
                 target: document.getElementById('chart'),
                 x_accessor: 'date',
                 y_accessor: 'count',
