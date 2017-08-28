@@ -11,7 +11,7 @@ if (querystring.length > 0) {
     var iframe = document.createElement('iframe');
     iframe.src = 'https://ashughes1.github.io/bugzilla-socorro-lens/chart.htm?s=' + querystring;
     //iframe.src = 'file:///home/ashughes/Development/bugzilla-socorro-lens/chart.htm?s=' + querystring;
-    iframe.setAttribute('style', 'border:0; height:190px');
+    iframe.setAttribute('style', 'border:0; height:290px');
     var container = document.getElementById(selector);
     if (container) container.appendChild(iframe);
 }

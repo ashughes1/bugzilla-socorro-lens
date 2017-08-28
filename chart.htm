@@ -19,12 +19,11 @@
     </style>
 </head>
 <body onload="loadGraph(window.location.search);">       
-    <div style="width:300px; height:150px;" id='chart' class='chart'></div>
-	<div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
+    <div style="width:500px; height:250px;" id='chart' class='chart'></div>
+	<div style="width:500px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
     <script src='metricsgraphics/main.js'></script>
     <script>
         var items = [];
-        var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
         var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*180));
         var globals = {
             "url_base":"https://crash-stats.mozilla.com/search/?",
@@ -81,8 +80,8 @@
             items = MG.convert.date(items, 'date');
             MG.data_graphic({
                 data: items,
-                width: 300,
-                height: 170,
+                width: 500,
+                height: 270,
                 target: document.getElementById('chart'),
                 x_accessor: 'date',
                 y_accessor: 'count',
@@ -123,7 +122,7 @@
 					if (!globals.url[i]) globals.url[i] = "";
 					globals.url[i] = globals.url_base + signatures[i];
 					// Iterate through the Socorro data and create the chart data object
-					var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d";
+					var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d";
 					url = url.replace("/?&signature", "/?signature");
 					d3.json(url, function(data) {
 						$.each(data, function(key, value) {
