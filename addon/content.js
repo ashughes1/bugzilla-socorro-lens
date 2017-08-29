@@ -10,7 +10,7 @@ if (querystring.length > 0) {
     querystring = querystring.substring(0,querystring.length-1);
     var iframe = document.createElement('iframe');
     iframe.src = 'https://ashughes1.github.io/bugzilla-socorro-lens/chart.htm?s=' + querystring;
-    iframe.setAttribute('style', 'border:0; width:610px; height:340px');
+    iframe.setAttribute('style', 'border:0; width:610px; height:360px');
     iframe.setAttribute('id', 'iframe_chart');
     var container = document.getElementById(selector);
     if (container) container.appendChild(iframe);
