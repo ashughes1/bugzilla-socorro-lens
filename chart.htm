@@ -28,7 +28,7 @@
     </style>
 </head>
 <body onload="loadGraph(window.location.search);">       
-    <div style="width:300px; height:110px;" id='chart' class='chart'></div>
+    <div style="width:300px; height:150px;" id='chart' class='chart'></div>
     <div style="width:30pt; height: 19pt; margin-left:10px" id='zoom' class='zoom'> +/- <div>
     <div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
     <script src='metricsgraphics/main.js'></script>
@@ -57,11 +57,11 @@
 		     $(".chart").toggleClass("enlarge");
 		     $(".zoom").toggleClass("shift");
 		     
-		     if ($('#iframe_chart', window.parent.document).height() == 300) {
-		        $('#iframe_chart', window.parent.document).height('150px');
-		     } else {
-		        $('#iframe_chart', window.parent.document).height('300px');
-		     }
+		     //if ($('#iframe_chart', window.parent.document).height() == 300) {
+		     //   $('#iframe_chart', window.parent.document).height('150px');
+		     //} else {
+		     //   $('#iframe_chart', window.parent.document).height('300px');
+		     //}
         });
         
         function convertDate(d) {
