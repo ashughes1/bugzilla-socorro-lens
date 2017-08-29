@@ -16,11 +16,21 @@
             margin-left:-20px;
             margin-top:-40px;
         }
+	div.enlarge {
+            transform: scale(2,2);
+            margin-left:140px;
+            margin-top:60px;
+        }
+        div.shift {
+            margin-top: 40px;
+            padding-top: 50px;
+        }
     </style>
 </head>
 <body onload="loadGraph(window.location.search);">       
-    <div style="width:300px; height:150px;" id='chart' class='chart'></div>
-	<div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
+    <div style="width:300px; height:110px;" id='chart' class='chart'></div>
+    <div style="width:30pt; height: 19pt; margin-left:10px" id='zoom' class='zoom'> +/- <div>
+    <div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
     <script src='metricsgraphics/main.js'></script>
     <script>
         var items = [];
@@ -42,6 +52,17 @@
 				});
             }
         };
+	    
+	$(".zoom").click(function(){
+		     $(".chart").toggleClass("enlarge");
+		     $(".zoom").toggleClass("shift");
+		     
+		     if ($('#iframe_chart', window.parent.document).height() == 300) {
+		        $('#iframe_chart', window.parent.document).height('150px');
+		     } else {
+		        $('#iframe_chart', window.parent.document).height('300px');
+		     }
+        });
         
         function convertDate(d) {
             var day = (d.getDate() < 10) ? '0' + d.getDate().toString() : d.getDate().toString();
