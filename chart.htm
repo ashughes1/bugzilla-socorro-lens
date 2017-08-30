@@ -16,33 +16,22 @@
             margin-left:-20px;
             margin-top:-40px;
         }
-	div.enlarge {
-            transform: scale(2,2);
-            margin-left:140px;
-            margin-top:60px;
-        }
-        div.shift {
-            margin-top: 40px;
-            padding-top: 50px;
-        }
     </style>
 </head>
 <body onload="loadGraph(window.location.search);">       
-    <div style="width:300px; height:150px;" id='chart' class='chart'></div>
-    <!-- <div style="width:30pt; height: 19pt; margin-left:10px" id='zoom' class='zoom'> +/- <div> -->
-    <div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
-    <script src='metricsgraphics/main.js'></script>
-    <script>
-        var items = [];
-        var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
-        var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*180));
-        var globals = {
-            "url_base":"https://crash-stats.mozilla.com/search/?",
-			"url":[],
-            "mouseover":function(d) {
-                var next = new Date(d.date.valueOf()+1*24*60*60*1000);
-                d3.select('svg .mg-active-datapoint')
-                    .text();
+  <div style="width:300px; height:150px;" id='chart' class='chart'></div>
+  <div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
+  <script src='metricsgraphics/main.js'></script>
+  <script>
+    var items = [];
+    var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
+    var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*180));
+    var globals = {
+      "url_base":"https://crash-stats.mozilla.com/search/?",
+      "url":[],
+      "mouseover":function(d) {
+        var next = new Date(d.date.valueOf()+1*24*60*60*1000);
+        d3.select('svg .mg-active-datapoint').text();
 				$.each(globals.url, function(i) {
 					if (globals.url[i].indexOf("&date=>%3D") !== -1) {
 						globals.url[i] = globals.url[i].substring(0,globals.url[i].indexOf("&date=>%3D"));
@@ -50,91 +39,79 @@
 					globals.url[i] = globals.url[i] + "&date=>%3D" + convertDate(d.date) + "&date=%3C" + convertDate(next);
 					globals.url[i] = globals.url[i].replace("/?&signature", "/?signature");
 				});
-            }
-        };
-	    
-	//$(".zoom").click(function(){
-	//	     $(".chart").toggleClass("enlarge");
-	//	     $(".zoom").toggleClass("shift");
-		     
-		     //if ($('#iframe_chart', window.parent.document).height() == 300) {
-		     //   $('#iframe_chart', window.parent.document).height('150px');
-		     //} else {
-		     //   $('#iframe_chart', window.parent.document).height('300px');
-		     //}
-        //});
+      }
+    };
         
-        function convertDate(d) {
-            var day = (d.getDate() < 10) ? '0' + d.getDate().toString() : d.getDate().toString();
-            var month = ((d.getMonth()+1) < 10) ? '0' + (d.getMonth()+1).toString() : (d.getMonth()+1).toString();
-            var year = d.getFullYear().toString();
-            return year + '-' + month + '-' + day;
-        }
+    function convertDate(d) {
+      var day = (d.getDate() < 10) ? '0' + d.getDate().toString() : d.getDate().toString();
+      var month = ((d.getMonth()+1) < 10) ? '0' + (d.getMonth()+1).toString() : (d.getMonth()+1).toString();
+      var year = d.getFullYear().toString();
+      return year + '-' + month + '-' + day;
+    }
         
-        function getSignaturesFromURL(search) {
-			var index = search.indexOf("?s=");
-            search = search.substring(index+3);
+    function getSignaturesFromURL(search) {
+	    var index = search.indexOf("?s=");
+      search = search.substring(index+3);
 			var signatures = [];
 			if (search.indexOf("\\") !== -1) {
-                signatures = search.split("\\");
-            } else if (search.indexOf("%5C") !== -1) {
-                signatures = search.split("%5C");
-            } else {
-				signatures = [search];
+        signatures = search.split("\\");
+      } else if (search.indexOf("%5C") !== -1) {
+        signatures = search.split("%5C");
+      } else {
+			  signatures = [search];
 			}
-            var result = [""];
-			
+      var result = [""];
 			var j = 0;
 			$.each(signatures, function(i) {
 				if (result[j].length > 500) result[++j] = "";
 				result[j] = result[j] + "&signature=~" + signatures[i]
-			});
-			
-            return result;
-        }
+			});	
+      return result;
+    }
 
-        function filterItems(i) {
-            return (i.count != -1 && i.installs != -1);
-        }
+    function filterItems(i) {
+      return (i.count != -1 && i.installs != -1);
+    }
 
-        function draw() {
-            items = items.filter(filterItems);
-            items = MG.convert.date(items, 'date');
-            MG.data_graphic({
-                data: items,
-                width: 300,
-                height: 170,
-                target: document.getElementById('chart'),
-                x_accessor: 'date',
-                y_accessor: 'count',
-                yax_count: 3,
-                chart_type: "line",
-                mouseover: globals.mouseover
-            });
-            if (globals.url.length > 1) {
-                var target = document.getElementById('warn');
-                target.style.visibility = "visible";
-                target.innerHTML = "WARNING: Too Many Signatures! <br />Report will be spread across " + globals.url.length + " tabs.</p>";
-            }
-            var mouseouts = d3.selectAll('.mg-rollover-rect rect').on('mouseout');
-            d3.selectAll('.mg-rollover-rect rect').on('click', function(d) {
-                $.each(globals.url, function(i) { window.open(globals.url[i], '_blank'); });
-            });
-        }
+    function draw() {
+      items = items.filter(filterItems);
+      items = MG.convert.date(items, 'date');
+      MG.data_graphic({
+        data: items,
+        width: 300,
+        height: 170,
+        target: document.getElementById('chart'),
+        x_accessor: 'date',
+        y_accessor: 'count',
+        yax_count: 3,
+        chart_type: "line",
+        mouseover: globals.mouseover
+      });
+      if (globals.url.length > 1) {
+        var target = document.getElementById('warn');
+        target.style.visibility = "visible";
+        target.innerHTML = "WARNING: Too Many Signatures! <br />Report will be spread across " + globals.url.length + " tabs.</p>";
+      }
+      var mouseouts = d3.selectAll('.mg-rollover-rect rect').on('mouseout');
+      d3.selectAll('.mg-rollover-rect rect').on('click', function(d) {
+        $.each(globals.url, function(i) {
+          window.open(globals.url[i], '_blank'); 
+        });
+      });      
+    }
             
-        function loadGraph(search) {
-			// Get all signatures from the Bugzilla page
-            var signatures = getSignaturesFromURL(search);
-
+    function loadGraph(search) {
+	    // Get all signatures from the Bugzilla page
+      var signatures = getSignaturesFromURL(search);
 			// Initialize chart data
-            for (var i=1; i<181; i++) {
-                items.push({
-                    "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
-                     "count":-1,
-                     "installs":-1
-                });
-            }
-			
+      for (var i=1; i<181; i++) {
+        items.push({
+          "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
+          "count":-1,
+          "installs":-1
+        });
+      }
+			// Process the Socorro data
 			if (items.length >= 180) {
 				var processed = [0,0];
 				var processed_groups = 0;
@@ -154,10 +131,10 @@
 								$.each(histogram_date, function(key, value) {
 									for (var j=0; j<items.length; j++) {
 										if (items[j].date == value.term.substring(0,10)) {
-										     var count = value.count;
-                                                                                     var installs = value.facets.cardinality_install_time.value;
-                                                                                     items[j].count = (items[j].count == -1) ? count : items[j].count + count;
-                                                                                     items[j].installs = (items[j].installs == -1) ? installs : items[j].installs + installs;
+										  var count = value.count;
+                       var installs = value.facets.cardinality_install_time.value;
+                       items[j].count = (items[j].count == -1) ? count : items[j].count + count;
+                       items[j].installs = (items[j].installs == -1) ? installs : items[j].installs + installs;
 										}
 									}
 									processed_data = processed_data + 1;
@@ -165,18 +142,11 @@
 									if (processed_groups >= signatures.length) draw();
 								});
 							}
-						});
-                                                
+						});                                   
 					});
-
-				});
-
-                                
-				
+				});	
 			}
 		}
-    </script>
+  </script>
 </body>
 </html>
-
-
