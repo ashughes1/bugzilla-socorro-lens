@@ -107,8 +107,8 @@
       for (var i=1; i<181; i++) {
         items.push({
           "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
-          "count":-1,
-          "installs":-1
+          "count":0,
+          "installs":0
         });
       }
 			// Process the Socorro data
@@ -133,8 +133,8 @@
 										if (items[j].date == value.term.substring(0,10)) {
 										  var count = value.count;
                        var installs = value.facets.cardinality_install_time.value;
-                       items[j].count = (items[j].count == -1) ? count : items[j].count + count;
-                       items[j].installs = (items[j].installs == -1) ? installs : items[j].installs + installs;
+                       items[j].count = (items[j].count == 0) ? count : items[j].count + count;
+                       items[j].installs = (items[j].installs == 0) ? installs : items[j].installs + installs;
 										}
 									}
 									processed_data = processed_data + 1;
