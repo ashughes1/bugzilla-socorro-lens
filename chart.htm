@@ -124,6 +124,7 @@
 					var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d";
 					url = url.replace("/?&signature", "/?signature");
 					d3.json(url, function(data) {
+						if (data.total > 0) {
 						$.each(data, function(key, value) {
 							if (key == "facets") {
 								var histogram_date = value.histogram_date;
@@ -142,7 +143,11 @@
 									if (processed_groups >= signatures.length) draw();
 								});
 							}
-						});                                   
+						});
+						} else {
+							processed_groups += 1;
+							if (processed_groups >= signatures.length) draw();
+						}
 					});
 				});	
 			}
