@@ -20,9 +20,28 @@
 </head>
 <body onload="loadGraph(window.location.search);">       
   <div style="width:300px; height:150px;" id='chart' class='chart'></div>
-  <div style="width:300px; height:75px; margin-top:-35px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
+  <div style="width:300px; height:35px; margin-top:-35px; text-align:center;" id='channel_div'>
+    <select name='channel' id='channel' >
+      <option value='all'>all</option>
+      <option value='release'>release</option>
+      <option value='beta'>beta</option>
+      <option value='nightly'>nightly</option>
+      <option value='esr'>esr</option>
+		</select>
+  </div>
+  <div style="width:300px; height:75px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
+
   <script src='metricsgraphics/main.js'></script>
   <script>
+	document.addEventListener('DOMContentLoaded',function() {
+      document.querySelector('select[name="channel"]').onchange=changeEventHandler;
+    },false);
+
+    function changeEventHandler(event) {
+    // You can use “this” to refer to the selected element.
+      redraw(event.target.value);
+    }
+	  
     var items = [];
     var end_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*1));
     var start_date = convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*180));
@@ -69,12 +88,7 @@
       return result;
     }
 
-    function filterItems(i) {
-      return (i.count != -1 && i.installs != -1);
-    }
-
     function draw() {
-      items = items.filter(filterItems);
       items = MG.convert.date(items, 'date');
       MG.data_graphic({
         data: items,
@@ -82,7 +96,7 @@
         height: 170,
         target: document.getElementById('chart'),
         x_accessor: 'date',
-        y_accessor: 'count',
+        y_accessor: 'all',
         yax_count: 3,
         chart_type: "line",
         mouseover: globals.mouseover
@@ -90,8 +104,35 @@
       if (globals.url.length > 1) {
         var target = document.getElementById('warn');
         target.style.visibility = "visible";
-        target.innerHTML = "WARNING: Too Many Signatures! <br />Report will be spread across " + globals.url.length + " tabs.</p>";
+        target.innerHTML = "Report will open " + globals.url.length + " tabs</p>";
       }
+      var mouseouts = d3.selectAll('.mg-rollover-rect rect').on('mouseout');
+      d3.selectAll('.mg-rollover-rect rect').on('click', function(d) {
+        $.each(globals.url, function(i) {
+          window.open(globals.url[i], '_blank'); 
+        });
+      });      
+    }
+    
+    function redraw(channel) {
+      MG.data_graphic({
+        data: items,
+        width: 300,
+        height: 170,
+        target: document.getElementById('chart'),
+        x_accessor: 'date',
+        y_accessor: channel,
+        yax_count: 3,
+        chart_type: "line",
+        mouseover: globals.mouseover
+      });
+      
+      if (globals.url.length > 1) {
+        var target = document.getElementById('warn');
+        target.style.visibility = "visible";
+        target.innerHTML = "[!] Report will open " + globals.url.length + " tabs due to signature length.</p>";
+      }
+      
       var mouseouts = d3.selectAll('.mg-rollover-rect rect').on('mouseout');
       d3.selectAll('.mg-rollover-rect rect').on('click', function(d) {
         $.each(globals.url, function(i) {
@@ -101,57 +142,65 @@
     }
             
     function loadGraph(search) {
-	    // Get all signatures from the Bugzilla page
+	  // Get all signatures from the Bugzilla page
       var signatures = getSignaturesFromURL(search);
-			// Initialize chart data
+	  // Initialize chart data
       for (var i=1; i<181; i++) {
         items.push({
           "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
-          "count":0,
-          "installs":0
+          "release":0,
+          "beta":0,
+          "nightly":0,
+          "esr":0,
+          "all":0
         });
       }
-			// Process the Socorro data
-			if (items.length >= 180) {
-				var processed = [0,0];
-				var processed_groups = 0;
-				$.each(signatures, function(i) {
-					var processed_data = 0;
-					// Set the report URL, this will be used to load the data report on click
-					if (!globals.url[i]) globals.url[i] = "";
-					globals.url[i] = globals.url_base + signatures[i];
-					// Iterate through the Socorro data and create the chart data object
-					var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=_cardinality.install_time&_histogram_interval=1d";
-					url = url.replace("/?&signature", "/?signature");
-					d3.json(url, function(data) {
-						if (data.total > 0) {
-						$.each(data, function(key, value) {
-							if (key == "facets") {
-								var histogram_date = value.histogram_date;
-								processed[1] = processed[1] + (histogram_date.length-1);
-								$.each(histogram_date, function(key, value) {
-									for (var j=0; j<items.length; j++) {
-										if (items[j].date == value.term.substring(0,10)) {
-										  var count = value.count;
-                       var installs = value.facets.cardinality_install_time.value;
-                       items[j].count = (items[j].count == 0) ? count : items[j].count + count;
-                       items[j].installs = (items[j].installs == 0) ? installs : items[j].installs + installs;
-										}
-									}
-									processed_data = processed_data + 1;
-									if (processed_data >= histogram_date.length) processed_groups = processed_groups + 1;
-									if (processed_groups >= signatures.length) draw();
-								});
-							}
+      
+      // Process the Socorro data
+	  if (items.length >= 180) {
+        var processed = [0,0];
+		var processed_groups = 0;
+		$.each(signatures, function(i) {
+		  var processed_data = 0;
+		  // Set the report URL, this will be used to load the data report on click
+		  if (!globals.url[i]) globals.url[i] = "";
+		  globals.url[i] = globals.url_base + signatures[i];
+		  // Iterate through the Socorro data and create the chart data object
+		  var url = "https://crash-stats.mozilla.com/api/SuperSearch/?" + signatures[i] + "&date=%3E%3D" + start_date + "&date=%3C%3D" + end_date + "&_histogram.date=release_channel&_histogram_interval=1d&_results_number=0";
+		  url = url.replace("/?&signature", "/?signature");
+		  d3.json(url, function(data) {
+            if (data.total > 0) {
+			  $.each(data, function(key, value) {
+			    if (key == "facets") {
+				  var histogram_date = value.histogram_date;
+				  processed[1] = processed[1] + (histogram_date.length-1);
+				  $.each(histogram_date, function(key, value) {
+				    for (var j=0; j<items.length; j++) {
+					  if (items[j].date == value.term.substring(0,10)) {
+						var channels = value.facets.release_channel;
+						$.each(value.facets.release_channel, function(channel_index, channel_data) {
+						  if (Object.keys(items[j]).includes(channel_data.term)) {
+					        items[j][channel_data.term] += channel_data.count;
+					      }
 						});
-						} else {
-							processed_groups += 1;
-							if (processed_groups >= signatures.length) draw();
-						}
-					});
-				});	
+						
+						items[j].all += value.count;
+					  }
+					}
+					processed_data = processed_data + 1;
+					if (processed_data >= histogram_date.length) processed_groups = processed_groups + 1;
+					if (processed_groups >= signatures.length) draw();
+				  });
+				}
+			  });
+			} else {
+			  processed_groups += 1;
+			  if (processed_groups >= signatures.length) draw();
 			}
-		}
+		  });
+		});	
+	  }
+	}
   </script>
 </body>
 </html>
