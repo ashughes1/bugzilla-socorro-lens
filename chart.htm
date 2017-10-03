@@ -27,19 +27,29 @@
       <option value='beta'>beta</option>
       <option value='nightly'>nightly</option>
       <option value='esr'>esr</option>
-		</select>
+	</select>
+	<select name='match' id='match' >
+      <option value='exact'>Exact Match</option>
+      <option value='like' selected=selected>Like Match</option>
+	</select>
   </div>
   <div style="width:300px; height:75px; color:red; text-align:center; visibility:hidden;" id='warn'></div>
 
   <script src='metricsgraphics/main.js'></script>
   <script>
 	document.addEventListener('DOMContentLoaded',function() {
-      document.querySelector('select[name="channel"]').onchange=changeEventHandler;
+      document.querySelector('select[name="channel"]').onchange=channelEventHandler;
+      document.querySelector('select[name="match"]').onchange=matchEventHandler;
     },false);
 
-    function changeEventHandler(event) {
+    function channelEventHandler(event) {
     // You can use “this” to refer to the selected element.
       redraw(event.target.value);
+    }
+    
+    function matchEventHandler(event) {
+    // You can use “this” to refer to the selected element.
+      loadGraph(window.location.search, event.target.value);
     }
 	  
     var items = [];
@@ -68,27 +78,32 @@
       return year + '-' + month + '-' + day;
     }
         
-    function getSignaturesFromURL(search) {
-	    var index = search.indexOf("?s=");
+    function getSignaturesFromURL(search, match) {
+	  var index = search.indexOf("?s=");
       search = search.substring(index+3);
-			var signatures = [];
-			if (search.indexOf("\\") !== -1) {
+	  var signatures = [];
+	  if (search.indexOf("\\") !== -1) {
         signatures = search.split("\\");
       } else if (search.indexOf("%5C") !== -1) {
         signatures = search.split("%5C");
       } else {
-			  signatures = [search];
-			}
+	    signatures = [search];
+	  }
       var result = [""];
-			var j = 0;
-			$.each(signatures, function(i) {
-				if (result[j].length > 500) result[++j] = "";
-				result[j] = result[j] + "&signature=~" + signatures[i]
-			});	
+	  var j = 0;
+	  $.each(signatures, function(i) {
+	  if (result[j].length > 500) result[++j] = "";
+	    if (match == "exact") {
+	      result[j] = result[j] + "&signature=%3D" + signatures[i]
+	    } else {
+		  result[j] = result[j] + "&signature=~" + signatures[i]
+		}
+	  });	
       return result;
     }
 
     function draw() {
+	  var channel = document.querySelector('select[name="channel"]').selectedOptions[0].value;
       items = MG.convert.date(items, 'date');
       MG.data_graphic({
         data: items,
@@ -96,7 +111,7 @@
         height: 170,
         target: document.getElementById('chart'),
         x_accessor: 'date',
-        y_accessor: 'all',
+        y_accessor: channel,
         yax_count: 3,
         chart_type: "line",
         mouseover: globals.mouseover
@@ -141,10 +156,11 @@
       });      
     }
             
-    function loadGraph(search) {
+    function loadGraph(search, match) {
 	  // Get all signatures from the Bugzilla page
-      var signatures = getSignaturesFromURL(search);
+      var signatures = getSignaturesFromURL(search, match);
 	  // Initialize chart data
+	  items = [];
       for (var i=1; i<181; i++) {
         items.push({
           "date":convertDate(new Date((new Date()).valueOf() - 1000*60*60*24*i)),
@@ -155,7 +171,7 @@
           "all":0
         });
       }
-      
+            
       // Process the Socorro data
 	  if (items.length >= 180) {
         var processed = [0,0];
