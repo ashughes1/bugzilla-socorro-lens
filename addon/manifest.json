@@ -8,11 +8,7 @@
       "id": "bugzilla-socorro-lens@ashughes.com"
     }
   },
-  "content_scripts": [
-    {
-      "matches": ["https://bugzilla.mozilla.org/show_bug.cgi?id=*"],
-      "js": ["uninstall.js"],
-      "run_at": "document_end"
-    }
-  ]
+  "background": {
+    "scripts": ["uninstall.js"]
+  }
 }
